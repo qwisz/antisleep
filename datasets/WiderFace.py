@@ -1,5 +1,4 @@
 import torch
-from PIL import Image, ImageDraw
 import torch.utils.data as data
 import numpy as np
 from pathlib import Path
@@ -28,9 +27,9 @@ class Wider(data.Dataset):
         img = Image.open(image_path).convert('RGB')
 
         if self.transforms is not None:
-            img, img_info = self.transforms(img, img_info)
+            img, img_info['target'] = self.transforms(img, img_info['target'])
 
-        return img, img_info
+        return img, img_info['target']
 
     def load_data(self, path):
 
@@ -65,16 +64,22 @@ class Wider(data.Dataset):
                 bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
 
                 bboxes = torch.as_tensor(bboxes, dtype=torch.float32)
+                labels = torch.zeros((num_faces,), dtype=torch.int64)
+
+                target = {
+                    'boxes': bboxes[:, 0:4],
+                    'labels': labels,
+                    # 'blur': bboxes[:, 4],
+                    # 'expression': bboxes[:, 5],
+                    # 'illumination': bboxes[:, 6],
+                    # 'invalid': bboxes[:, 7],
+                    # 'occlusion': bboxes[:, 8],
+                    # 'pose': bboxes[:, 9]
+                }
 
                 img_info = {
                     'img_path': img_path,
-                    'bboxes': bboxes[:, 0:4],
-                    'blur': bboxes[:, 4],
-                    'expression': bboxes[:, 5],
-                    'illumination': bboxes[:, 6],
-                    'invalid': bboxes[:, 7],
-                    'occlusion': bboxes[:, 8],
-                    'pose': bboxes[:, 9]
+                    'target': target
                 }
 
                 self.data.append(img_info)
