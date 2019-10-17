@@ -64,7 +64,7 @@ class Wider(data.Dataset):
                 bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
 
                 bboxes = torch.as_tensor(bboxes, dtype=torch.float32)
-                labels = torch.zeros((num_faces,), dtype=torch.int64)
+                labels = torch.ones((num_faces,), dtype=torch.int64)
 
                 target = {
                     'boxes': bboxes[:, 0:4],
