@@ -51,6 +51,8 @@ class Wider(data.Dataset):
                 idx += 1
 
                 bboxes = np.empty((num_faces, 10))
+                print(bboxes.shape)
+                print('==========^')
 
                 if num_faces != 0:
                     for j in range(num_faces):
@@ -61,31 +63,32 @@ class Wider(data.Dataset):
 
                 invalid_examples_mask = np.where(np.logical_or(bboxes[:, 2] <= 0, bboxes[:, 3] <= 0))
                 bboxes = np.delete(bboxes, invalid_examples_mask, axis=0)
+                if bboxes.shape[0] >= 0:
+                    # xmin, ymin, width, height -> xmin, ymin, xmax, ymax
+                    bboxes[:, 2] = bboxes[:, 0] + bboxes[:, 2]
+                    bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
 
-                # xmin, ymin, width, height -> xmin, ymin, xmax, ymax
-                bboxes[:, 2] = bboxes[:, 0] + bboxes[:, 2]
-                bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
+                    bboxes = torch.as_tensor(bboxes, dtype=torch.float32)
+                    labels = torch.ones((num_faces,), dtype=torch.int64)
 
-                bboxes = torch.as_tensor(bboxes, dtype=torch.float32)
-                labels = torch.ones((num_faces,), dtype=torch.int64)
 
-                target = {
-                    'boxes': bboxes[:, 0:4],
-                    'labels': labels,
-                    # 'blur': bboxes[:, 4],
-                    # 'expression': bboxes[:, 5],
-                    # 'illumination': bboxes[:, 6],
-                    # 'invalid': bboxes[:, 7],
-                    # 'occlusion': bboxes[:, 8],
-                    # 'pose': bboxes[:, 9]
-                }
+                    target = {
+                        'boxes': bboxes[:, 0:4],
+                        'labels': labels,
+                        # 'blur': bboxes[:, 4],
+                        # 'expression': bboxes[:, 5],
+                        # 'illumination': bboxes[:, 6],
+                        # 'invalid': bboxes[:, 7],
+                        # 'occlusion': bboxes[:, 8],
+                        # 'pose': bboxes[:, 9]
+                    }
 
-                img_info = {
-                    'img_path': img_path,
-                    'target': target
-                }
+                    img_info = {
+                        'img_path': img_path,
+                        'target': target
+                    }
 
-                self.data.append(img_info)
+                    self.data.append(img_info)
 
         elif self.mode == 'test':
             self.data = [{'img_path': line.strip() for line in lines}]
