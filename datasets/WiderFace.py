@@ -51,8 +51,6 @@ class Wider(data.Dataset):
                 idx += 1
 
                 bboxes = np.empty((num_faces, 10))
-                print(bboxes.shape)
-                print('==========^')
 
                 if num_faces != 0:
                     for j in range(num_faces):
