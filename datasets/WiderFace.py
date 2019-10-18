@@ -61,7 +61,7 @@ class Wider(data.Dataset):
 
                 invalid_examples_mask = np.where(np.logical_or(bboxes[:, 2] <= 0, bboxes[:, 3] <= 0))
                 bboxes = np.delete(bboxes, invalid_examples_mask, axis=0)
-                if bboxes.shape[0] >= 0:
+                if bboxes.shape[0] > 0:
                     # xmin, ymin, width, height -> xmin, ymin, xmax, ymax
                     bboxes[:, 2] = bboxes[:, 0] + bboxes[:, 2]
                     bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
