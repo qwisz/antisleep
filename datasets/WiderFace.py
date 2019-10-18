@@ -31,6 +31,9 @@ class Wider(data.Dataset):
 
         return img, img_info['target']
 
+    def get_img_path(self, index):
+        return self.data[index]['img_path']
+
     def load_data(self, path):
 
         with open(path) as f:

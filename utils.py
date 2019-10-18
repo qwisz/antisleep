@@ -1,6 +1,8 @@
 import torch
 from torchvision.transforms import functional as F
 import random
+from PIL import Image, ImageDraw
+import matplotlib.pyplot as plt
 
 
 class ToTensor(object):
@@ -56,3 +58,15 @@ def warmup_lr_scheduler(optimizer, warmup_iters, warmup_factor):
 
 def collate_fn(batch):
     return tuple(zip(*batch))
+
+
+def filter_bboxes(boxes, scores, threshold=0.5):
+    return boxes[scores > threshold]
+
+
+def get_pil_image_with_boxes(image, boxes):
+    img = image.copy()
+    draw = ImageDraw.Draw(img)
+    for box in boxes:
+        draw.rectangle(box, outline=(0, 255, 0))
+    return img
