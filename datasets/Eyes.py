@@ -24,11 +24,11 @@ class Eyes(data.Dataset):
         img_info = self.data[index]
         img = Image.open(img_info['img_path']).convert('RGB')
 
-        if self.transforms is not None:
-            img, img_info['target'] = self.transforms(img)
-
         if self.size is not None:
             img = img.resize(self.size)
+
+        if self.transforms is not None:
+            img = self.transforms(img)
 
         return img, img_info['target']
 
