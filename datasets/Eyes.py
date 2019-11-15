@@ -6,13 +6,14 @@ from os import listdir
 
 
 class Eyes(data.Dataset):
-    def __init__(self, root, transforms=None, mode='train'):
+    def __init__(self, root, size=None, transforms=None, mode='train'):
         super(Eyes, self).__init__()
 
         self.data = []
         self.root_path = Path(root)  # ../eyes/
         self.mode = mode
         self.transforms = transforms
+        self.size = size
 
         self.load_data()
 
@@ -25,6 +26,9 @@ class Eyes(data.Dataset):
 
         if self.transforms is not None:
             img, img_info['target'] = self.transforms(img, img_info['target'])
+
+        if self.size is not None:
+            img = img.resize(self.size)
 
         return img, img_info['target']
 
