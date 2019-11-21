@@ -7,7 +7,7 @@ def filter_bboxes(prediction, threshold=0.5):
     return bboxes[scores > threshold]
 
 
-def get_pil_image_with_boxes(image, boxes):
+def pil_image_with_boxes(image, boxes):
     img = image.copy()
     draw = ImageDraw.Draw(img)
     for box in boxes:
