@@ -45,7 +45,7 @@ class FaceDetector:
         bboxes = bboxes[to_keep]
         scores = scores[to_keep]
 
-        return bboxes.detach(), scores.detach()  # detach().numpy() ??
+        return bboxes.cpu().detach(), scores.cpu().detach()  # detach().numpy() ??
 
 
 class EyesClassifier:
