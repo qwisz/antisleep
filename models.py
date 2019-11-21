@@ -71,4 +71,4 @@ class EyesClassifier:
 
         _, prediction = torch.max(outputs, 1)
 
-        return prediction.detach()
+        return prediction.cpu().detach()
