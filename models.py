@@ -35,8 +35,7 @@ class FaceDetector:
 
     def __call__(self, image, threshold=0.5):
         image = self.to_tensor(image)
-        image.to(self.device)
-        print(type(image))
+        image = image.to(self.device)
         prediction = self.model([image])
 
         bboxes = prediction[0]['boxes']
@@ -66,7 +65,7 @@ class EyesClassifier:
     def __call__(self, image):
         image = image.resize((224, 224))
         image = self.to_tensor(image).unsqueeze(0)
-        image.to(self.device)
+        image = image.to(self.device)
 
         outputs = self.model(image)
 
