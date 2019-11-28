@@ -3,6 +3,7 @@ from pathlib import Path
 import torch.utils.data as data
 from PIL import Image
 from os import listdir
+import cv2 as cv
 
 
 class Eyes(data.Dataset):
@@ -22,7 +23,9 @@ class Eyes(data.Dataset):
 
     def __getitem__(self, index):
         img_info = self.data[index]
-        img = Image.open(img_info['img_path']).convert('RGB')
+        # img = Image.open(img_info['img_path']).convert('RGB')
+        img = cv.imread(str(img_info['img_path']))
+        img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
         if self.size is not None:
             img = img.resize(self.size)
