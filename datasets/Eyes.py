@@ -28,7 +28,9 @@ class Eyes(data.Dataset):
         img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
         if self.size is not None:
-            img = img.resize(self.size)
+            # img = img.resize(self.size)
+            img = cv.resize(img, self.size)
+
 
         if self.transforms is not None:
             img = self.transforms(img)
