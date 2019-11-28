@@ -3,7 +3,7 @@ import torch.utils.data as data
 import numpy as np
 from pathlib import Path
 from PIL import Image
-
+import cv2 as cv
 
 class Wider(data.Dataset):
     def __init__(self, root, path, transforms=None, mode='train'):
@@ -24,7 +24,9 @@ class Wider(data.Dataset):
         img_info = self.data[index]
         image_root = self.root_path / 'WIDER_{0}'.format(self.mode)
         image_path = image_root / "images" / img_info['img_path']
-        img = Image.open(image_path).convert('RGB')
+        # img = Image.open(image_path).convert('RGB')
+        img = cv.imread(str(image_path))
+        img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
 
         if self.transforms is not None:
             img, img_info['target'] = self.transforms(img, img_info['target'])
