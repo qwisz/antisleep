@@ -1,8 +1,11 @@
+import cv2 as cv
 import torch
-from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+from torchvision.models import mobilenet_v2
 from torchvision.models.detection import fasterrcnn_resnet50_fpn
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.transforms import ToTensor
-from torchvision.models import mobilenet_v2, mnasnet1_0
+
+from image_utils import crop_image
 
 
 class FullModel:
@@ -10,14 +13,23 @@ class FullModel:
         self.face_detector = FaceDetector(face_detector_path)
         self.eyes_classifier = EyesClassifier(eyes_classidier_path)
 
-    def __call__(self, image, face_threshold=0.5):
+    def __call__(self, image, face_threshold=0.7):
         boxes, scores = self.face_detector(image)
 
-        face = image.crop(*boxes.numpy())  # if any faces?
+        # face = image.crop(*boxes.numpy())  # if several faces?
+        boxes = boxes.numpy()
+        if len(boxes) == 0:
+            return None, None
+
+        # todo: finalize for several persons
+        if len(boxes) > 1:
+            return None, None
+
+        face = crop_image(image, *boxes) # if several faces?
 
         is_close = self.eyes_classifier(face).numpy()
 
-        return is_close
+        return is_close, boxes
 
 
 class FaceDetector:
@@ -33,7 +45,7 @@ class FaceDetector:
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
 
-    def __call__(self, image, threshold=0.5):
+    def __call__(self, image, threshold=0.7):
         image = self.to_tensor(image)
         image = image.to(self.device)
         prediction = self.model([image])
@@ -63,7 +75,8 @@ class EyesClassifier:
         self.model.eval()
 
     def __call__(self, image):
-        image = image.resize((224, 224))
+        # image = image.resize((224, 224))
+        image = cv.resize(image, (224, 224))
         image = self.to_tensor(image).unsqueeze(0)
         image = image.to(self.device)
 

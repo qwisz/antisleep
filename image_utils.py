@@ -13,3 +13,8 @@ def pil_image_with_boxes(image, boxes):
     for box in boxes:
         draw.rectangle(box, outline=(0, 255, 0))
     return img
+
+def crop_image(image, box):
+    xmin, ymin, xmax, ymax = box
+    crop = image[int(ymin):int(ymax), int(xmin):int(xmax)]
+    return crop
