@@ -45,12 +45,13 @@ def process_video(vid, model):
         try:
             ret, frame = vid.read()
 
-            eyes_status, boxes = model(frame)
-            if eyes_status is not None and boxes is not None:
-                for i, (eyes, box) in enumerate(zip(eyes_status, boxes)):
-                    frame = draw_bbox(frame, box, eyes)
+            if frame is not None:
+                eyes_status, boxes = model(frame)
+                if eyes_status is not None and boxes is not None:
+                    for i, (eyes, box) in enumerate(zip(eyes_status, boxes)):
+                        frame = draw_bbox(frame, box, eyes)
 
-            out.write(frame)
+                out.write(frame)
 
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
