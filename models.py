@@ -46,6 +46,7 @@ class FaceDetector:
         self.model.eval()
 
     def __call__(self, image, threshold=0.7):
+        print(type(image))
         image = self.to_tensor(image)
         image = image.to(self.device)
         prediction = self.model([image])
