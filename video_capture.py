@@ -12,7 +12,7 @@ def draw_bbox(frame: np.array, face_box: tuple, eyes_status: int):
                  (0, 155, 255),
                  2
                  )
-    text_top_left = (int(xmin), int(ymin) - 3 )
+    text_top_left = (int(xmin), int(ymin) - 3)
     result = 'closed' if eyes_status == 1 else 'opened'
     cv.putText(frame, result, text_top_left, cv.FONT_HERSHEY_SIMPLEX, 1, (0, 200, 0), 2, cv.LINE_AA)
     return frame
@@ -36,3 +36,25 @@ def run_video_capture(cap, model):
 
     cap.release()
     cv.destroyAllWindows()
+
+
+def process_video(vid, model):
+    fourcc = cv.VideoWriter_fourcc(*'XVID')
+    out = cv.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
+    while vid.isOpened():
+        try:
+            ret, frame = vid.read()
+
+            eyes_status, boxes = model(frame)
+            if eyes_status is not None and boxes is not None:
+                for i, (eyes, box) in enumerate(zip(eyes_status, boxes)):
+                    frame = draw_bbox(frame, box, eyes)
+
+            out.write(frame)
+
+            if cv.waitKey(1) & 0xFF == ord('q'):
+                break
+        except KeyboardInterrupt:
+            print("Releasing")
+            break
+    return out
