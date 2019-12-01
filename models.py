@@ -74,9 +74,9 @@ class EyesClassifier:
         self.model.classifier[1] = torch.nn.Linear(num_features, num_classes)
 
         # mnasnet
-        self.model = mnasnet1_0()
-        num_features = self.model.classifier[1].in_features
-        self.model.classifier[1] = torch.nn.Linear(num_features, 2)
+        # self.model = mnasnet1_0()
+        # num_features = self.model.classifier[1].in_features
+        # self.model.classifier[1] = torch.nn.Linear(num_features, 2)
 
 
         self.model = self.model.to(self.device)
