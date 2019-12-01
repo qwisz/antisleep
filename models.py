@@ -1,6 +1,6 @@
 import cv2 as cv
 import torch
-from torchvision.models import mobilenet_v2
+from torchvision.models import mobilenet_v2, mnasnet1_0
 from torchvision.models.detection import fasterrcnn_resnet50_fpn
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.transforms import ToTensor
@@ -68,9 +68,17 @@ class EyesClassifier:
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
+        # mobilenet_v2
         self.model = mobilenet_v2()
         num_features = self.model.classifier[1].in_features
         self.model.classifier[1] = torch.nn.Linear(num_features, num_classes)
+
+        # mnasnet
+        self.model = mnasnet1_0()
+        num_features = self.model.classifier[1].in_features
+        self.model.classifier[1] = torch.nn.Linear(num_features, 2)
+
+
         self.model = self.model.to(self.device)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
