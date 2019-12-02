@@ -1,11 +1,11 @@
 import cv2 as cv
 import torch
-from torchvision.models import mobilenet_v2, mnasnet1_0
+from torchvision.models import mobilenet_v2
 from torchvision.models.detection import fasterrcnn_resnet50_fpn
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.transforms import ToTensor
 
-from image_utils import crop_image
+from eyes_classifier.image_utils import crop_image
 
 
 class FullModel:
@@ -21,7 +21,7 @@ class FullModel:
         if len(boxes) == 0:
             return None, None
 
-        # todo: finalize for several persons
+        # todo: for several persons
         if len(boxes) > 1:
             return None, None
 
@@ -46,7 +46,6 @@ class FaceDetector:
         self.model.eval()
 
     def __call__(self, image, threshold=0.7):
-        print(type(image))
         image = self.to_tensor(image)
         image = image.to(self.device)
         prediction = self.model([image])
