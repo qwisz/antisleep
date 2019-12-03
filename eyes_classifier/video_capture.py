@@ -22,7 +22,8 @@ def run_video_capture(cap, model):
     while True:
         try:
             ret, frame = cap.read()
-            eyes_status, boxes = model(frame)
+            frame_rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+            eyes_status, boxes = model(frame_rgb)
             if eyes_status is not None and boxes is not None:
                 for i, (eyes, box) in enumerate(zip(eyes_status, boxes)):
                     frame = draw_bbox(frame, box, eyes)
@@ -39,8 +40,11 @@ def run_video_capture(cap, model):
 
 
 def process_video(vid, model):
+    width = int(vid.get(cv.CAP_PROP_FRAME_WIDTH) + 0.5)
+    height = int(vid.get(cv.CAP_PROP_FRAME_HEIGHT) + 0.5)
+    size = (width, height)
     fourcc = cv.VideoWriter_fourcc(*'XVID')
-    out = cv.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
+    out = cv.VideoWriter('output.avi', fourcc, 20.0, size)
     while vid.isOpened():
         try:
             ret, frame = vid.read()
