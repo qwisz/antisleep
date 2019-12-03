@@ -1,5 +1,4 @@
-import torch
-from utils import warmup_lr_scheduler
+from eyes_classifier.utils import warmup_lr_scheduler
 
 
 def train_one_epoch(model, optimizer, data_loader, device, epoch):
