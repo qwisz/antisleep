@@ -22,14 +22,17 @@ def run_video_capture(cap, model):
     while True:
         try:
             ret, frame = cap.read()
-            frame_rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-            eyes_status, boxes = model(frame_rgb)
-            if eyes_status is not None and boxes is not None:
-                for i, (eyes, box) in enumerate(zip(eyes_status, boxes)):
-                    frame = draw_bbox(frame, box, eyes)
+            if ret:
+                frame_rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+                eyes_status, boxes = model(frame_rgb)
+                if eyes_status is not None and boxes is not None:
+                    for i, (eyes, box) in enumerate(zip(eyes_status, boxes)):
+                        frame = draw_bbox(frame, box, eyes)
 
-            cv.imshow('frame', frame)
-            if cv.waitKey(1) & 0xFF == ord('q'):
+                cv.imshow('frame', frame)
+                if cv.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
                 break
         except KeyboardInterrupt:
             print("Releasing")
@@ -39,17 +42,17 @@ def run_video_capture(cap, model):
     cv.destroyAllWindows()
 
 
-def process_video(vid, model):
+def process_video(vid, model, output_path):
     width = int(vid.get(cv.CAP_PROP_FRAME_WIDTH) + 0.5)
     height = int(vid.get(cv.CAP_PROP_FRAME_HEIGHT) + 0.5)
     size = (width, height)
     fourcc = cv.VideoWriter_fourcc(*'XVID')
-    out = cv.VideoWriter('output.avi', fourcc, 20.0, size)
+    out = cv.VideoWriter(output_path, fourcc, 15.0, size)
     while vid.isOpened():
         try:
             ret, frame = vid.read()
 
-            if frame is not None:
+            if ret:
                 eyes_status, boxes = model(frame)
                 if eyes_status is not None and boxes is not None:
                     for i, (eyes, box) in enumerate(zip(eyes_status, boxes)):
@@ -57,8 +60,10 @@ def process_video(vid, model):
 
                 out.write(frame)
 
-            if cv.waitKey(1) & 0xFF == ord('q'):
+            else:
                 break
+
+
         except KeyboardInterrupt:
             print("Releasing")
             break
