@@ -14,7 +14,7 @@ def draw_bbox(frame: np.array, face_box: tuple, eyes_status: int):
                  )
     text_top_left = (int(xmin), int(ymin) - 3)
     result = 'closed' if eyes_status == 1 else 'opened'
-    cv.putText(frame, result, text_top_left, cv.FONT_HERSHEY_SIMPLEX, 1, (0, 200, 0), 2, cv.LINE_AA)
+    cv.putText(frame, result, text_top_left, cv.FONT_HERSHEY_SIMPLEX, 2, (0, 200, 0), 2, cv.LINE_AA)
     return frame
 
 
